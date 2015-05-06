@@ -11,6 +11,31 @@ A live running example can be found at: [https://amzn.github.io/web-app-starter-
 
 A zip file of the Starter Kit example projects can be found here:<br> [https://amzn.github.io/web-app-starter-kit-for-fire-tv/web-app-starter-kit-for-fire-tv-projects.zip](https://amzn.github.io/web-app-starter-kit-for-fire-tv/web-app-starter-kit-for-fire-tv-projects.zip "Downloadable Zip of Projects")
 
+# Kaltura webapp details
+
+## Kaltura model
+* Pulls Kaltura entries from a defined top level category "topCategoryId"
+* Aggregates all categories listed in response into flat top level category list.
+
+## Kaltura Player
+* Takes a configuration defined Kaltura player and makes it "chromeless" by disabling common containers. 
+* Supports basic ad playback, but could use enhancement.   
+* All analytics business logic should remain active per defined player config. 
+
+## Sample project
+Supports parametrized overrides, it's recommend you disables these overrides for a shipping application. 
+* partnerId -- the Kaltura account partner id 
+* uiconfId -- player id
+* topCategoryId -- the top level category id, all descending categories and entries will be used to define app content.  
+* ksService -- url to service to retrieve ks. 
+* appLogo -- absolute or assets/ relative path to URL to logo.
+
+## Known Limitations
+* Stubs for ad-state also submitted to minimal viable UI during ad playback; should be enhanced to integrate "skip" into parent application, and enhanced to maybe hide the progress all-together in favor of ad count down. 
+* limits number of active entries because it loads all into memory, taking advantage of sub categories should be done for a subsequent update. 
+* No ability to manually define categories included
+
+
 ## Setup
 -------------------
 
@@ -19,7 +44,7 @@ A zip file of the Starter Kit example projects can be found here:<br> [https://a
 
 Clone the repository to your local development environment.
 
-		git clone https://github.com/amzn/web-app-starter-kit-for-fire-tv.git
+		git clone https://github.com/kaltura/web-app-starter-kit-for-fire-tv.git
 
 ### Setting up the test server
 -------------------
