@@ -60,6 +60,7 @@
         */
         this.remove = function () {
             this.controlsView.remove();
+            kWidget.destroy(  this.$el.attr('id') );
             this.$el.remove();
             clearInterval(this.statusInterval);
         };
@@ -212,12 +213,12 @@
                     break;
                 case buttons.LEFT:
                 case buttons.REWIND:
-                    this.seekVideo(-30);
+                	this.seekVideo(-this.skipLength);
                     break;
 
                 case buttons.RIGHT:
                 case buttons.FAST_FORWARD:
-                    this.seekVideo(30);
+                	this.seekVideo(this.skipLength);
                     break;
                 case buttons.UP:
                     this.controlsView.showAndHideControls();
