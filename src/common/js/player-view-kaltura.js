@@ -189,17 +189,16 @@
         this.handleControls = function (e) {
             if (e.type !== 'buttonpress') { return; }
             
-            if( this.currentState === 'playing-ad' ){
-            	// ignore all keyboard input
-            	this.controlsView.showAndHideControls();
-            	return ;
-            }
-            
             switch (e.keyCode) {
                 case buttons.SELECT:
                 case buttons.PLAY_PAUSE: 
                     switch (this.currentState) {
                         case 'playing':
+                        	// ignore pause during ad: 
+                        	if( this.currentState === 'playing-ad' ){
+                            	this.controlsView.showAndHideControls();
+                            	break;
+                            }
                             this.pauseVideo();
                             break;
 
@@ -213,11 +212,23 @@
                     break;
                 case buttons.LEFT:
                 case buttons.REWIND:
+                	// don't allow rewind during ad:
+                	if( this.currentState === 'playing-ad' ){
+                    	this.controlsView.showAndHideControls();
+                    	break;
+                    }
+                	
                 	this.seekVideo(-this.skipLength);
                     break;
 
                 case buttons.RIGHT:
                 case buttons.FAST_FORWARD:
+                	// don't allow fast forward during ad:
+                	if( this.currentState === 'playing-ad' ){
+                    	this.controlsView.showAndHideControls();
+                    	break;
+                    }
+                	
                 	this.seekVideo(this.skipLength);
                     break;
                 case buttons.UP:
