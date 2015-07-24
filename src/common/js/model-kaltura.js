@@ -35,21 +35,76 @@
             
             // In all cases we will want the kWidget lib loaded for content display or additional api calls.  
             this.kalturaWidgetLoader.done( function() {
+            	// check for defined set of playlist Ids for all top level categories: 
+            	if( appSettings.playlistIds ){
+            		_this.loadFromPlaylists();
+            		return ;
+            	}
                 // get a ks: 
                 $.getJSON( appSettings.ksService, function(data){
                     if( data.ks ){
-                        _this.loadInitialDataViaAPI( data.ks );
+                    	_this.loadFromCategories( data.ks );
                     }
                 });
             });
             // load kWidget lib, will resolve kalturaWidgetLoader
             this.loadKWidget();
         }.bind(this);
-        
+        this.loadFromPlaylists = function (){
+        	var _this = this;
+        	var plSet = appSettings.playlistIds.split( ',' );
+        	// get all the playlists: 
+        	var request = [];
+        	for(var i=0;i<plSet.length;i++){
+        		request.push({
+                    'service': 'playlist',
+                    'action': 'get', 
+                    'id': plSet[i]
+                 });
+        		request.push({
+                    'service': 'playlist',
+                    'action': 'execute', 
+                    'id': plSet[i]
+                 });
+        	}
+        	new kWidget.api( {
+                 'wid' : '_' + appSettings.partnerId
+            }).doRequest(request, function( data ){
+            	_this.hanldePlaylistData(data);
+            });
+        }
+        this.hanldePlaylistData = function(data){
+            this.categoryData = [];
+            this.currentCategory = 0;
+            this.mediaData = [];
+            // handle playlist data sets:
+            for(var i=0;i<data.length;i++){
+            	var categoryName = data[i].name ;
+            	this.categoryData.push( categoryName  );
+            	// add for all the entries: 
+            	for( var j=0;j < data[i+1].length;j++){
+            		var entry = data[i+1][j];
+	            	this.mediaData.push({
+	                     "id": entry.id,
+	                     "title": entry.name,
+	                     "pubDate": this.unixTimestampToDate( entry.createdAt ),
+	                     "thumbURL": entry.thumbnailUrl,
+	                     "imgURL": entry.thumbnailUrl + '/width/640',
+	                     "videoURL": entry.dataUrl,
+	                     //"subtitlesURL" : "assets/sample_video-en.vtt",
+	                     "categories": [categoryName],
+	                     "description": entry.description || ""
+	                 });
+            	}
+            	// increment by 2
+            	i++;
+            }
+            this.deferredData.resolve();
+        };
         /**
          * Loads data via API call
          */
-        this.loadInitialDataViaAPI = function( ks ){
+        this.loadFromCategories = function( ks ){
             var _this = this;
             var request = [{
                'service': 'baseEntry',
@@ -76,15 +131,15 @@
                 'wid' : '_' + appSettings.partnerId,
                 'ks': ks 
             }).doRequest(request, function( data ){
-                _this.hanldeDataFromPlaylist( data );
+                _this.hanldeCategoryData( data );
             });
                 
         }.bind(this);
         
         /** 
-         * Handle playlist loaded data
+         * Handle category loaded data
          */
-        this.hanldeDataFromPlaylist = function(data){
+        this.hanldeCategoryData= function(data){
             this.categoryData = [];
             this.currentCategory = 0;
             this.mediaData = [];
@@ -344,7 +399,7 @@
          };
 
        /**
-        * Store the refrerence to the currently selected content item
+        * Store the reference to the currently selected content item
         * @param {Number} index the index of the selected item
         */
         this.setCurrentItem = function (index) {
