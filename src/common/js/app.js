@@ -99,6 +99,15 @@
             else {
                 logo = "assets/img_logo.png";
             }
+            if( app.data.appBg ){
+            	var style = document.createElement("style");
+            	style.appendChild(document.createTextNode(""));
+            	document.head.appendChild(style);
+            	style.sheet.insertRule( "body { " +
+            			"background: #5a656f url('" + app.data.appBg + "') no-repeat left top;" +
+            			"background-size: 100% auto; " +
+            		"}" );
+            }
             
             var html = utils.buildTemplate($("#app-header-template"), {
                 img_logo:logo

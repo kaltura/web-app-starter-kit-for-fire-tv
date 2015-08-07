@@ -21,6 +21,9 @@
          if( appSettings.appLogo ){
         	 this.appLogo = appSettings.appLogo;
          }
+         if( appSettings.appBg ){
+        	 this.appBg = appSettings.appBg;
+         }
         /**
          * This function loads the initial data needed to start the app and calls the provided callback with the data when it is fully loaded
          * @param {function} the callback function to call with the loaded data
